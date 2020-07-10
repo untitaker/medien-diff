@@ -29,4 +29,4 @@ A small command-line tool and web application that scrapes news websites for hea
 
 ## License
 
-Licensed under MIT, see [`LICENSE`](./LICENSE).
+Licensed under the BSD license, see [`LICENSE`](./LICENSE).
