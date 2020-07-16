@@ -20,6 +20,7 @@ app.config["SECRET_KEY"] = os.environ["FLASK_SECRET_KEY"]
 
 sentry_sdk.init(
     _experiments={"auto_enabling_integrations": True},
+    traces_sample_rate=1.0,
     environment=app.env,
     in_app_include=["medien_diff"],
 )
