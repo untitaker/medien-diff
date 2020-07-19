@@ -26,6 +26,7 @@ from medien_diff import QUEUES
 from medien_diff.models import db, Newspaper, ArticleRevision
 from medien_diff.html_utils import css, to_string
 from medien_diff.text import is_significant_title_change
+from medien_diff.sentry_utils import tag_http_response
 
 http_session = requests.session()
 requests.utils.add_dict_to_cookiejar(http_session.cookies, {"DSGVO_ZUSAGE_V1": "true",})
@@ -85,6 +86,7 @@ def fetch_newspaper_frontpage(newspaper_id):
     article_url_pattern = re.compile(paper.article_url_pattern)
 
     response = http_session.get(paper.base_url)
+    tag_http_response(response)
     response.raise_for_status()
 
     tree = lxml.html.fromstring(response.text)
@@ -122,7 +124,7 @@ def fetch_newspaper_article(newspaper_id, url):
     article = db.session.query(ArticleRevision).get(url)
 
     response = http_session.get(url)
-    sentry_sdk.set_tag("status", response.status_code)
+    tag_http_response(response)
     response.raise_for_status()
 
     tree = lxml.html.fromstring(response.text)
