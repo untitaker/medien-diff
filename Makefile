@@ -17,9 +17,6 @@ worker:
 refresh:
 	poetry run flask refresh
 
-queues:
-	poetry run rq-dashboard
-
 format:
 	poetry run black .
 

@@ -20,7 +20,7 @@ A small command-line tool and web application that scrapes news websites for hea
 
 1. Run `make refresh` to spawn a refresh job. You will need to run this regularly, in a cronjob of some sort, to keep your Twitter account active.
 2. Run `make worker` to run an additional process to help the previous process with downloading and processing.
-3. Run `make queues` to view pending and failed jobs. If sending a tweet fails, you have the option to retry it or delete it. All other job failures are discarded immediately.
+3. Run `make server` and go to `http://127.0.0.1:5000/queues` to view pending and failed jobs. If sending a tweet fails, you have the option to retry it or delete it. All other job failures are discarded immediately.
 
 ## Crash reporting
 

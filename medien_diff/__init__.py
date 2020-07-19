@@ -67,6 +67,10 @@ admin = flask_admin.Admin(app)
 admin.add_view(ModelView(Newspaper, db.session))
 admin.add_view(ModelView(ArticleRevision, db.session, with_primary_key=True))
 
+import rq_dashboard.web
+
+app.register_blueprint(rq_dashboard.web.blueprint, url_prefix="/queues")
+
 
 @app.route("/")
 def index():

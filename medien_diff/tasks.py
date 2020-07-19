@@ -4,6 +4,7 @@ import logging
 import datetime
 import urllib
 import functools
+import random
 import tempfile
 
 from selenium import webdriver
@@ -61,9 +62,11 @@ def refresh_all():
     ).delete()
     db.session.commit()
 
-    articles = list(db.session.query(ArticleRevision).filter(
-        ArticleRevision.fetched_at < now - datetime.timedelta(days=1)
-    ))
+    articles = list(
+        db.session.query(ArticleRevision).filter(
+            ArticleRevision.fetched_at < now - datetime.timedelta(days=1)
+        )
+    )
 
     random.shuffle(articles)
 
