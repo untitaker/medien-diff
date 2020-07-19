@@ -61,9 +61,13 @@ def refresh_all():
     ).delete()
     db.session.commit()
 
-    for article in db.session.query(ArticleRevision).filter(
+    articles = list(db.session.query(ArticleRevision).filter(
         ArticleRevision.fetched_at < now - datetime.timedelta(days=1)
-    ):
+    ))
+
+    random.shuffle(articles)
+
+    for article in articles:
         QUEUES["slow"].enqueue(
             fetch_newspaper_article, newspaper_id=article.newspaper, url=article.url
         )
