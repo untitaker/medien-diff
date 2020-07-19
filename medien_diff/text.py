@@ -26,7 +26,7 @@ def _is_bad_title(title):
     Filter out tweets about live sports events from Kronenzeitung
     """
 
-    return title.strip().lower().startswith("live:")
+    return "live:" in title.strip().lower()
 
 
 def _title_equality_key(title):

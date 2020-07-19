@@ -23,6 +23,7 @@ def test_significant(a, b):
         ("blob", "blbo"),
         ("Foo under pressure from all sides", "Foo from all sides under pressure"),
         ("wurde geholt", "wurden geholt"),
+        ("ab 16:00 live:", "jetzt live:"),
     ],
 )
 def test_insignificant(a, b):
