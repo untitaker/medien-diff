@@ -1,6 +1,6 @@
 import string
 
-_NOISE_CHARS = frozenset(string.punctuation) | frozenset(string.digits) | frozenset(" ")
+_NOISE_CHARS = frozenset(string.punctuation) | frozenset(string.digits)
 
 
 def is_significant_title_change(old, new):
@@ -30,4 +30,7 @@ def _is_bad_title(title):
 
 
 def _title_equality_key(title):
-    return [c for c in "".join(title.upper().strip().split()) if c not in _NOISE_CHARS]
+    title = "".join(
+        c for c in " ".join(title.upper().strip().split()) if c not in _NOISE_CHARS
+    )
+    return " ".join(sorted(title.split()))

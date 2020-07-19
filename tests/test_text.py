@@ -21,6 +21,7 @@ def test_significant(a, b):
         ("fo", "foo"),
         ("fooo", "foo"),
         ("blob", "blbo"),
+        ("Foo under pressure from all sides", "Foo from all sides under pressure"),
     ],
 )
 def test_insignificant(a, b):
