@@ -1,12 +1,27 @@
+import pytest
+
 from medien_diff.text import is_significant_title_change
 
 
-def test_is_significant_title_change():
-    assert is_significant_title_change("bar", "foo ")
-    assert is_significant_title_change("bar ", "foo ")
-    assert is_significant_title_change("", "foo ")
-    assert not is_significant_title_change("foo  bar", "foo bar")
-    assert not is_significant_title_change("live: foo  bar", "foo bar")
-    assert not is_significant_title_change("foo", "live: bar")
-    assert not is_significant_title_change("foo", "live: bar")
-    assert not is_significant_title_change("foo.", "foo")
+@pytest.mark.parametrize("a,b", [("bar", "foo "), ("bar ", "foo "), ("", "foo "),])
+def test_significant(a, b):
+    assert is_significant_title_change(a, b)
+
+
+@pytest.mark.parametrize(
+    "a,b",
+    [
+        ("foo  bar", "foo bar"),
+        ("live: foo  bar", "foo bar"),
+        ("foo", "live: bar"),
+        ("foo", "live: bar"),
+        ("foo.", "foo"),
+        ("Foo: 42 new things", "Foo: 43 new things"),
+        ("foo", "Foo"),
+        ("fo", "foo"),
+        ("fooo", "foo"),
+        ("blob", "blbo"),
+    ],
+)
+def test_insignificant(a, b):
+    assert not is_significant_title_change(a, b)
