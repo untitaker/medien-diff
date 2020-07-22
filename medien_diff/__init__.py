@@ -3,6 +3,8 @@ import os
 import tweepy
 import rq
 import sentry_sdk
+from sentry_sdk.integrations.redis import RedisIntegration
+from sentry_sdk.integrations.pure_eval import PureEvalIntegration
 import click
 import flask
 import flask_admin
@@ -23,6 +25,7 @@ sentry_sdk.init(
     traces_sample_rate=1.0,
     environment=app.env,
     in_app_include=["medien_diff"],
+    integrations=[PureEvalIntegration(), RedisIntegration()],
 )
 
 

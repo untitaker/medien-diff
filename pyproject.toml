@@ -21,6 +21,9 @@ flask-sqlalchemy = "^2.4.3"
 tweepy = "^3.8.0"
 simplediff = "^1.0"
 selenium = "^3.141.0"
+pure_eval = "^0.1.0"
+executing = "^0.5.0"
+asttokens = "^2.0.4"
 
 [tool.poetry.dev-dependencies]
 black = "^19.10b0"
