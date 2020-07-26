@@ -16,7 +16,7 @@ def init_db(app):
 class Newspaper(db.Model):
     __tablename__ = "newspaper"
 
-    form_create_rules = (
+    form_create_rules = form_edit_rules = (
         rules.HTML("<p>Name of the newspaper. For example: <code>Der Standard</code>"),
         "name",
         rules.HTML(

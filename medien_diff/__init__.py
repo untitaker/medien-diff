@@ -60,8 +60,9 @@ class ModelView(flask_admin.contrib.sqla.ModelView):
             self.column_list = [c.key for c in model.__table__.columns]
             self.form_columns = self.column_list
 
-        if hasattr(model, "form_create_rules"):
-            self.form_create_rules = model.form_create_rules
+        for field in "form_create_rules", "form_edit_rules":
+            if hasattr(model, field):
+                setattr(self, field, getattr(model, field))
 
         super(ModelView, self).__init__(model, *args, **kwargs)
 
