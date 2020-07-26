@@ -75,6 +75,7 @@ def refresh_all():
             newspaper_id=article.newspaper,
             url=article.url,
             delete_if_no_change=True,
+            delete_if_no_match_regex=True,
         )
 
 
@@ -115,12 +116,20 @@ def fetch_newspaper_frontpage(newspaper_id):
 
 
 @job
-def fetch_newspaper_article(newspaper_id, url, delete_if_no_change=False):
+def fetch_newspaper_article(
+    newspaper_id, url, delete_if_no_change=False, delete_if_no_match_regex=False
+):
     sentry_sdk.set_tag("newspaper_id", newspaper_id)
     sentry_sdk.set_tag("url", url)
     now = datetime.datetime.now()
 
     paper = db.session.query(Newspaper).get(newspaper_id)
+
+    if delete_if_no_match_regex and not re.compile(paper.article_url_pattern).match(
+        url
+    ):
+        db.session.query(ArticleRevision).filter(ArticleRevision.url == url).delete()
+        return
 
     response = http_session.get(url)
     tag_http_response(response)
