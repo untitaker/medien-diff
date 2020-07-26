@@ -121,11 +121,17 @@ def fetch_newspaper_article(newspaper_id, url, delete_if_no_change=False):
 
     paper = db.session.query(Newspaper).get(newspaper_id)
 
-    article = db.session.query(ArticleRevision).get(url)
-
     response = http_session.get(url)
     tag_http_response(response)
     response.raise_for_status()
+
+    article = db.session.query(ArticleRevision).get(response.url)
+    if article is None:
+        article = db.session.query(ArticleRevision).get(url)
+        if article is not None:
+            article.url = response.url
+    else:
+        db.session.query(ArticleRevision).filter(ArticleRevision.url == url).delete()
 
     tree = lxml.html.fromstring(response.text)
 
