@@ -2,6 +2,7 @@ import re
 import io
 import logging
 import datetime
+import hashlib
 import urllib
 import functools
 import random
@@ -22,7 +23,7 @@ import lxml.etree
 
 import requests
 
-from medien_diff import QUEUES
+from medien_diff import QUEUES, redis_conn
 from medien_diff.models import db, Newspaper, ArticleRevision
 from medien_diff.html_utils import css, to_string
 from medien_diff.text import is_significant_title_change
@@ -186,6 +187,23 @@ def tweet(newspaper_id, url, old, new):
         or not paper.twitter_access_token_secret
     ):
         return
+
+    # Defend against broken db entries
+    hasher = hashlib.sha256()
+    hasher.update(b"%s" % (newspaper_id,))
+    hasher.update(b":")
+    hasher.update(url.encode("utf8"))
+    hasher.update(b":")
+    hasher.update(old.encode("utf8"))
+    hasher.update(b":")
+    hasher.update(new.encode("utf8"))
+    debounce_key = hasher.hexdigest()
+
+    if redis_conn.get(debounce_key):
+        logger.error("tweet.duplicate")
+        return
+
+    redis_conn.set(debounce_key, b"1")
 
     html_ctx = tempfile.NamedTemporaryFile(suffix=".html")
     png_ctx = tempfile.NamedTemporaryFile(suffix=".png")
