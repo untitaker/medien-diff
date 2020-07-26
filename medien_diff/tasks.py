@@ -29,7 +29,9 @@ from medien_diff.text import is_significant_title_change
 from medien_diff.sentry_utils import tag_http_response
 
 http_session = requests.session()
-requests.utils.add_dict_to_cookiejar(http_session.cookies, {"DSGVO_ZUSAGE_V1": "true",})
+requests.utils.add_dict_to_cookiejar(
+    http_session.cookies, {"DSGVO_ZUSAGE_V1": "true",}  # derstandard needs this
+)
 
 _ALL_LINKS_XPATH = css("a")
 
@@ -58,14 +60,9 @@ def refresh_all():
 
     now = datetime.datetime.now()
 
-    db.session.query(ArticleRevision).filter(
-        ArticleRevision.changed_at < now - datetime.timedelta(days=7)
-    ).delete()
-    db.session.commit()
-
     articles = list(
         db.session.query(ArticleRevision).filter(
-            ArticleRevision.fetched_at < now - datetime.timedelta(days=1)
+            ArticleRevision.fetched_at < now - datetime.timedelta(days=7)
         )
     )
 
@@ -73,7 +70,10 @@ def refresh_all():
 
     for article in articles:
         QUEUES["slow"].enqueue(
-            fetch_newspaper_article, newspaper_id=article.newspaper, url=article.url
+            fetch_newspaper_article,
+            newspaper_id=article.newspaper,
+            url=article.url,
+            delete_if_no_change=True,
         )
 
 
@@ -114,7 +114,7 @@ def fetch_newspaper_frontpage(newspaper_id):
 
 
 @job
-def fetch_newspaper_article(newspaper_id, url):
+def fetch_newspaper_article(newspaper_id, url, delete_if_no_change=False):
     sentry_sdk.set_tag("newspaper_id", newspaper_id)
     sentry_sdk.set_tag("url", url)
     now = datetime.datetime.now()
@@ -162,6 +162,9 @@ def fetch_newspaper_article(newspaper_id, url):
 
         if changed:
             article.changed_at = now
+
+        if not changed and delete_if_no_change:
+            article.delete()
 
     db.session.commit()
 
