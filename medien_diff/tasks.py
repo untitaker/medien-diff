@@ -180,7 +180,7 @@ def fetch_newspaper_article(
             article.changed_at = now
 
         if not changed and delete_if_no_change:
-            article.delete()
+            db.session.delete(article)
 
     db.session.commit()
 
