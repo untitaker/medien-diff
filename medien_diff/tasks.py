@@ -199,7 +199,7 @@ def tweet(newspaper_id, url, old, new):
 
     # Defend against broken db entries
     hasher = hashlib.sha256()
-    hasher.update(b"%s" % (newspaper_id,))
+    hasher.update(str(newspaper_id).encode("ascii"))
     hasher.update(b":")
     hasher.update(url.encode("utf8"))
     hasher.update(b":")
